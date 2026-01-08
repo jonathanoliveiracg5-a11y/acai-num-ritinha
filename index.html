@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cardápio Online • Açaíteria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#100515; --bg-card:#1b0b22; --bg-soft:#240b2c;
+    --fg:#f7f2fa; --muted:#cbb7d6; --brand:#A020F0; --brand-2:#FFCC00;
+    --danger:#ff6b6b; --chip:#2a1233; --chip-border:#3b1b47; --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html,body { height:100%; }
+  body{
+    margin:0; font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
+    color:var(--fg);
+    background: radial-gradient(1200px 800px at 80% -10%, #2b0f3a, transparent), radial-gradient(900px 600px at -10% 110%, #3a114e, transparent), var(--bg);
+  }
+  .container{ max-width:1100px; margin:0 auto; padding:24px; }
+  header{ display:flex; align-items:center; gap:16px; justify-content:space-between; margin-bottom:18px; }
+  .brand{ display:flex; gap:12px; align-items:center; }
+  .logo{ width:44px; height:44px; border-radius:12px; background: conic-gradient(from 120deg, var(--brand), #6a00ff, #ff3df0, var(--brand)); box-shadow:var(--shadow); }
+  h1{ font-size:clamp(1.4rem, 1rem + 2vw, 2.1rem); margin:0; letter-spacing:.5px; }
+  .note{ color:var(--muted); font-size:.95rem; }
+  .badge{ display:inline-block; padding:4px 8px; border-radius:999px; background:#2d1640; border:1px solid #4a225e; font-size:.8rem; }
+
+  .grid{ display:grid; gap:18px; grid-template-columns:1fr; }
+  @media (min-width:900px){ .grid{ grid-template-columns:1.2fr .8fr; } }
+
+  .card{ background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:18px; box-shadow:var(--shadow); }
+  .card h2{ margin:0 0 8px; font-size:1.1rem; }
+  .sub{ color:var(--muted); font-size:.9rem; margin-bottom:8px; }
+
+  .row{ display:flex; flex-wrap:wrap; gap:10px; }
+  .options{ display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:10px; }
+  .chip, .radio{
+    display:flex; align-items:center; gap:10px; width:100%; cursor:pointer; padding:10px 12px; border-radius:12px;
+    background:var(--chip); border:1px solid var(--chip-border); transition:.2s; user-select:none;
+  }
+  .radio input, .chip input{ appearance:none; width:18px; height:18px; border:2px solid #7c3aa0; border-radius:6px; }
+  .radio input{ border-radius:999px; }
+  .radio input:checked, .chip input:checked{ background: linear-gradient(135deg, var(--brand), #ff3df0); border-color:transparent; }
+  .price{ margin-left:auto; color:#ffe27a; font-weight:600; }
+  .hint{ color:var(--muted); font-size:.85rem; margin-top:6px; }
+  .hidden{ display:none !important; }
+  .error{ color:var(--danger); font-weight:700; font-size:.9rem; margin-top:6px; }
+  .summary{ position:sticky; top:18px; }
+  .total{ display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding:12px 14px; background: linear-gradient(135deg,#321240,#261133); border:1px solid rgba(255,255,255,.08); border-radius:12px; }
+  .total .amount{ font-size:1.35rem; font-weight:700; }
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .btn{ border:none; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer; transition:.2s; }
+  .btn-primary{ background: linear-gradient(135deg, var(--brand), #ff3df0); color:#fff; }
+  .btn-primary:hover{ transform:translateY(-1px); filter:saturate(110%); }
+  .btn-ghost{ background:transparent; color: var(--fg); border:1px dashed rgba(255,255,255,.25); }
+  .btn-ghost:hover{ border-color:#fff; }
+  .input{ width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.2); background:var(--bg-soft); color:var(--fg); }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <header style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;">
+  <img src="acaidaalicy.jpg" alt="Logo Açaíteria da Alicy" style="height:70px;width:auto;border-radius:50%;">
+  <h1 style="color:white;font-size:28px;margin:0;"> Cardápio Online - Açaíteria da Alicy</h1>
+</header>
+
+          <div class="note">Monte seu açaí e envie o pedido por WhatsApp.</div>
+        </div>
+      </div>
+      <span class="badge">Entrega / Retirada</span>
+    </header>
+
+    <div class="grid">
+      <main class="card" id="builder">
+        <!-- Tipo do Açaí -->
+        <section>
+          <h2>Tipo de Açaí</h2>
+          <div class="sub">Escolha entre Tradicional e Zero</div>
+          <div class="row" id="tipos">
+            <label class="radio"><input type="radio" name="tipo" value="trad"> <strong>Tradicional</strong></label>
+            <label class="radio"><input type="radio" name="tipo" value="zero"> <strong>Zero</strong></label>
+          </div>
+          <div id="err-tipo" class="error hidden">Selecione o tipo de açaí.</div>
+        </section>
+
+        <!-- Tamanho -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Tamanho</h2>
+          <div class="sub">Selecione o volume (ml)</div>
+          <div class="row" id="tamanhos"></div>
+          <div id="err-size" class="error hidden">Selecione um tamanho.</div>
+        </section>
+
+        <!-- Cremes (opcional) -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Cremes <span class="hint">(opcional)</span></h2>
+          <div class="options" id="cremes"></div>
+        </section>
+
+        <!-- Frutas (opcional) -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Frutas <span class="hint">(opcional)</span></h2>
+          <div class="options" id="frutas"></div>
+        </section>
+
+        <!-- Coberturas (opcional) -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Coberturas <span class="hint">(opcional)</span></h2>
+          <div class="options" id="coberturas"></div>
+        </section>
+
+        <!-- Recheios -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Recheios <span class="hint">(até 6)</span></h2>
+          <div class="options" id="recheios"></div>
+          <div class="hint" id="count-recheios">0 / 6 selecionados</div>
+        </section>
+
+        <!-- Adicionais -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Adicionais</h2>
+          <div class="sub">Nutella como adicional (+ R$ 2,00)</div>
+          <div class="options" id="adicionais"></div>
+        </section>
+
+        <!-- Pagamento -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Pagamento</h2>
+          <div class="options" id="pagamento">
+            <label class="radio"><input type="radio" name="pay" value="Pix"><span><strong>Pix</strong><br><span class="sub">Chave enviada após o pedido</span></span></label>
+            <label class="radio"><input type="radio" name="pay" value="Cartão"><span><strong>Cartão</strong><br><span class="sub">Link (Mercado Pago) ou Maquininha</span></span></label>
+            <label class="radio"><input type="radio" name="pay" value="Espécie"><span><strong>Espécie</strong><br><span class="sub">Informe se precisa de troco</span></span></label>
+          </div>
+
+          <!-- Subopções do cartão -->
+          <div id="cardWrap" class="card hidden" style="margin-top:10px;">
+            <div class="sub" style="margin-bottom:8px;">Como será o pagamento no cartão?</div>
+            <div class="row" id="cardModes">
+              <label class="radio"><input type="radio" name="cardmode" value="Link (Mercado Pago)"><strong>Link (Mercado Pago)</strong></label>
+              <label class="radio"><input type="radio" name="cardmode" value="Maquininha (na entrega)"><strong>Maquininha (na entrega)</strong></label>
+            </div>
+            <div id="err-card" class="error hidden">Selecione “Link (Mercado Pago)” ou “Maquininha”.</div>
+          </div>
+
+          <!-- Troco -->
+          <div id="trocoWrap" class="row hidden" style="margin-top:10px;">
+            <input id="troco" type="text" inputmode="numeric" placeholder="Precisa de troco para quanto? (ex: 50)" class="input" style="flex:1;">
+          </div>
+          <div id="err-pay" class="error hidden">Selecione a forma de pagamento.</div>
+        </section>
+
+        <!-- Observações -->
+        <section class="card" style="margin-top:14px;">
+          <h2>Observações</h2>
+          <input id="obs" class="input" type="text" placeholder="Ex.: pouco doce, sem granola, entregar na portaria...">
+        </section>
+      </main>
+
+      <aside class="card summary" aria-live="polite">
+        <h2>Resumo do Pedido</h2>
+        <div class="sub">Confira os itens escolhidos</div>
+        <div id="resumo" style="margin-top:10px; line-height:1.7;"></div>
+
+        <div class="total"><span>Total</span><span class="amount" id="total">R$ 0,00</span></div>
+        <div class="hint">Regras: recheios até 6. Cremes, frutas e coberturas são opcionais. Adicional de Nutella: R$ 2,00.</div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="btnWhats">Enviar por WhatsApp</button>
+          <button class="btn btn-ghost" id="btnCopy">Copiar pedido</button>
+        </div>
+
+        <div class="hint">Troque o número no código para o WhatsApp da sua loja.</div>
+      </aside>
+    </div>
+
+    <div class="hint" style="text-align:center; margin-top:14px;">© <span id="year"></span> • Feito com ♥ para sua açaíteria</div>
+  </div>
+
+<script>
+(function(){
+  const currency = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+  const numberWhatsApp = '5584999026075'; // <-- Troque pelo número da loja (DDI+DDD)
+
+  // Preços (conforme sua arte)
+  const PRECOS = {
+    trad: {"250ml":10,"300ml":12,"400ml":16,"500ml":20,"600ml":24,"700ml":28,"800ml":32,"900ml":36,"1000ml":40},
+    zero: {"200ml":10,"250ml":12,"300ml":16,"400ml":20,"500ml":24,"600ml":28,"700ml":32,"800ml":36,"900ml":40,"1000ml":48}
+  };
+
+  const DATA = {
+    cremes:["Ninho","Ninho trufado","Morango","Cupuaçu","Amendoim","Ovomaltine","Oreo","Tapioca","Chiclete","Café"],
+    coberturas:["Açaí","Avelã com cacau","Leite condensado","Morango","Chocolate","Caramelo","Cookies cream","Pistache","Fini dentaduras","Fini beijos","Fini bananas","Nutella (adicional)"],
+    frutas:["Banana","Kiwi","Morango"],
+    recheios:["Leite em pó","Ovomaltine","Farinha Lacta","Oreo","M&M","Granola","Coco","Farinha de castanha","Marshmallow","Amendoim","Gotas","Bis","Canudo","Flocos de arroz","Chocoball","Chocopoower","Paçoca","Cereja","Jujuba"],
+    adicionais:[{name:"Nutella",price:2}]
+  };
+
+  // Helpers
+  const $$=(s,c=document)=>Array.from(c.querySelectorAll(s));
+  const $=(s,c=document)=>c.querySelector(s);
+  const el={
+    tamanhos:$('#tamanhos'), cremes:$('#cremes'), coberturas:$('#coberturas'), frutas:$('#frutas'), recheios:$('#recheios'), adicionais:$('#adicionais'),
+    total:$('#total'), resumo:$('#resumo'), errTipo:$('#err-tipo'), errSize:$('#err-size'), errPay:$('#err-pay'), errCard:$('#err-card'),
+    trocoWrap:$('#trocoWrap'), troco:$('#troco'), cardWrap:$('#cardWrap'), countRecheios:$('#count-recheios'), obs:$('#obs')
+  };
+
+  // Render helpers
+  function renderList(container, items, type, name, withPrice=false){
+    container.innerHTML = items.map(v=>{
+      const label = typeof v==='object'? v.name : v;
+      const price = typeof v==='object'? v.price : null;
+      return `<label class="${type}"><input type="${type==='radio'?'radio':'checkbox'}" name="${name}" value="${label}" ${price?`data-preco="${price}"`:''}><span>${label}</span>${price?`<span class="price">+ ${currency.format(price)}</span>`:''}</label>`;
+    }).join('');
+  }
+  function renderTamanhos(tipo){
+    const t=PRECOS[tipo]||{};
+    el.tamanhos.innerHTML = Object.entries(t).map(([vol,preco])=>
+      `<label class="radio"><input type="radio" name="tamanho" value="${vol}" data-preco="${preco}"><strong>${vol}</strong><span class="price">${currency.format(preco)}</span></label>`
+    ).join('');
+  }
+
+  // Render inicial
+  renderList(el.cremes,DATA.cremes,'radio','creme');
+  renderList(el.coberturas,DATA.coberturas,'radio','cobertura');
+  renderList(el.frutas,DATA.frutas,'radio','fruta');
+  renderList(el.recheios,DATA.recheios,'chip','recheio');
+  renderList(el.adicionais,DATA.adicionais,'chip','adicional',true);
+
+  // Limite de recheios
+  function enforceRecheiosLimit(){
+    const checks = $$('input[name="recheio"]:checked');
+    el.countRecheios.textContent = `${checks.length} / 6 selecionados`;
+    const all = $$('input[name="recheio"]');
+    const lock = checks.length >= 6;
+    all.forEach(i => { if(!i.checked) i.disabled = lock; });
+  }
+
+  // Eventos gerais
+  document.addEventListener('change', e=>{
+    if(e.target.name==='recheio') enforceRecheiosLimit();
+
+    if(e.target.name==='pay'){
+      const pay=$('input[name="pay"]:checked')?.value;
+      el.trocoWrap.classList.toggle('hidden', pay!=='Espécie');
+      el.cardWrap.classList.toggle('hidden', pay!=='Cartão');
+      if(pay!=='Cartão'){ $$('input[name="cardmode"]').forEach(i=>i.checked=false); }
+      if(pay!=='Espécie'){ el.troco.value=''; }
+    }
+    if(e.target.name==='tipo'){
+      const tipo=$('input[name="tipo"]:checked')?.value;
+      renderTamanhos(tipo);
+    }
+    updateUI();
+  });
+  el.obs.addEventListener('input', updateUI);
+
+  function selections(){
+    const tipo=$('input[name="tipo"]:checked');
+    const tamanho=$('input[name="tamanho"]:checked');
+    const creme=$('input[name="creme"]:checked');     // opcional
+    const fruta=$('input[name="fruta"]:checked');     // opcional
+    const cobertura=$('input[name="cobertura"]:checked'); // opcional
+    const recheios=$$('input[name="recheio"]:checked').map(i=>i.value);
+    const adicionais=$$('input[name="adicional"]:checked').map(i=>({name:i.value,price:Number(i.dataset.preco||0)}));
+    const pay=$('input[name="pay"]:checked');
+    const cardMode=$('input[name="cardmode"]:checked');
+
+    let total=0;
+    if(tamanho) total+=Number(tamanho.dataset.preco);
+    adicionais.forEach(a=> total+=a.price);
+
+    return {tipo,tamanho,creme,fruta,cobertura,recheios,adicionais,pay,cardMode,total};
+  }
+
+  function validate(){
+    const s=selections();
+    el.errTipo.classList.toggle('hidden',!!s.tipo);
+    el.errSize.classList.toggle('hidden',!!s.tamanho);
+    el.errPay.classList.toggle('hidden',!!s.pay);
+
+    const cardOk = !(s.pay && s.pay.value==='Cartão') || !!s.cardMode;
+    $('#err-card').classList.toggle('hidden', cardOk);
+
+    return !!(s.tipo && s.tamanho && s.pay && cardOk);
+  }
+
+  function updateUI(){
+    const s=selections();
+    el.total.textContent = currency.format(s.total);
+
+    const lines=[];
+    lines.push(`<strong>Tipo:</strong> ${s.tipo? (s.tipo.value==='trad'?'Tradicional':'Zero'):'—'}`);
+    lines.push(`<strong>Tamanho:</strong> ${s.tamanho? `${s.tamanho.value} (${currency.format(Number(s.tamanho.dataset.preco))})`:'—'}`);
+    lines.push(`<strong>Creme:</strong> ${s.creme? s.creme.value:'Nenhum'}`);
+    lines.push(`<strong>Fruta:</strong> ${s.fruta? s.fruta.value:'Nenhuma'}`);
+    lines.push(`<strong>Cobertura:</strong> ${s.cobertura? s.cobertura.value:'Nenhuma'}`);
+    lines.push(`<strong>Recheios:</strong> ${s.recheios.length? s.recheios.join(', '):'Nenhum'}`);
+    lines.push(`<strong>Adicionais:</strong> ${s.adicionais.length? s.adicionais.map(a=>a.name).join(', '):'Nenhum'}`);
+    lines.push(`<strong>Pagamento:</strong> ${s.pay? s.pay.value:'—'}`);
+    if(s.pay && s.pay.value==='Cartão'){
+      lines.push(`<strong>Modo do cartão:</strong> ${s.cardMode? s.cardMode.value:'—'}`);
+    }
+    if(s.pay && s.pay.value==='Espécie'){
+      lines.push(`<strong>Troco:</strong> ${el.troco.value ? currency.format(Number(el.troco.value)||0) : 'informar'}`);
+    }
+    if(el.obs.value.trim()) lines.push(`<strong>Obs:</strong> ${el.obs.value.trim()}`);
+
+    el.resumo.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
+  }
+
+  // Ações
+  $('#btnWhats').addEventListener('click', ()=>{
+    if(!validate()){ window.scrollTo({top:0, behavior:'smooth'}); return; }
+    const s=selections();
+    const parts=[
+      '🍧 *Pedido de Açaí*',
+      `Tipo: ${s.tipo.value==='trad'?'Tradicional':'Zero'}`,
+      `Tamanho: ${s.tamanho.value} (${currency.format(Number(s.tamanho.dataset.preco))})`,
+      `Creme: ${s.creme? s.creme.value:'Nenhum'}`,
+      `Fruta: ${s.fruta? s.fruta.value:'Nenhuma'}`,
+      `Cobertura: ${s.cobertura? s.cobertura.value:'Nenhuma'}`,
+      `Recheios: ${s.recheios.length? s.recheios.join(', '):'Nenhum'}`,
+      `Adicionais: ${s.adicionais.length? s.adicionais.map(a=>a.name).join(', '):'Nenhum'}`,
+      `Pagamento: ${s.pay.value}`,
+      (s.pay.value==='Cartão'? `Modo do cartão: ${s.cardMode.value}`: null),
+      (s.pay.value==='Cartão' && s.cardMode.value==='Link (Mercado Pago)'? 'Obs.: A proprietária irá gerar e enviar o link do Mercado Pago.': null),
+      (s.pay.value==='Espécie'? `Troco: ${el.troco.value ? currency.format(Number(el.troco.value)||0) : 'Informar'}`: null),
+      (el.obs.value.trim()? `Obs: ${el.obs.value.trim()}`: null),
+      `Total: ${currency.format(s.total)}`
+    ].filter(Boolean);
+
+    const url=`https://wa.me/${numberWhatsApp}?text=${encodeURIComponent(parts.join('\n'))}`;
+    window.open(url,'_blank');
+  });
+
+  $('#btnCopy').addEventListener('click', async ()=>{
+    if(!validate()){ window.scrollTo({top:0, behavior:'smooth'}); return; }
+    const s=selections();
+    const text=[
+      'Pedido de Açaí:',
+      `Tipo: ${s.tipo.value==='trad'?'Tradicional':'Zero'}`,
+      `Tamanho: ${s.tamanho.value} (${currency.format(Number(s.tamanho.dataset.preco))})`,
+      `Creme: ${s.creme? s.creme.value:'Nenhum'}`,
+      `Fruta: ${s.fruta? s.fruta.value:'Nenhuma'}`,
+      `Cobertura: ${s.cobertura? s.cobertura.value:'Nenhuma'}`,
+      `Recheios: ${s.recheios.length? s.recheios.join(', '):'Nenhum'}`,
+      `Adicionais: ${s.adicionais.length? s.adicionais.map(a=>a.name).join(', '):'Nenhum'}`,
+      `Pagamento: ${s.pay.value}`,
+      (s.pay.value==='Cartão'? `Modo do cartão: ${s.cardMode.value}`: null),
+      (s.pay.value==='Cartão' && s.cardMode.value==='Link (Mercado Pago)'? 'Obs.: A proprietária irá gerar e enviar o link do Mercado Pago.': null),
+      (s.pay.value==='Espécie'? `Troco: ${el.troco.value ? currency.format(Number(el.troco.value)||0) : 'Informar'}`: null),
+      (el.obs.value.trim()? `Obs: ${el.obs.value.trim()}`: null),
+      `Total: ${currency.format(s.total)}`
+    ].filter(Boolean).join('\n');
+
+    try{ await navigator.clipboard.writeText(text); alert('Pedido copiado!'); }
+    catch{ alert('Não foi possível copiar automaticamente.'); }
+  });
+
+  // Inicial
+  document.getElementById('year').textContent = new Date().getFullYear();
+  updateUI();
+})();
+</script>
+</body>
+</html>
