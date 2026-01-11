@@ -176,17 +176,17 @@
           <button class="btn btn-ghost" id="btnCopy">Copiar pedido</button>
         </div>
 
-        <div class="hint">Troque o número no código para o WhatsApp da sua loja.</div>
+        
       </aside>
     </div>
 
-    <div class="hint" style="text-align:center; margin-top:14px;">© <span id="year"></span> • Feito com ♥ para sua açaíteria</div>
+    <div class="hint" style="text-align:center; margin-top:14px;">© <span id="year"></span> ♥ açaíteria</div>
   </div>
 
 <script>
 (function(){
   const currency = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
-  const numberWhatsApp = '5584999026075'; // <-- Troque pelo número da loja (DDI+DDD)
+  const numberWhatsApp = '5584999026075'; 
 
   // Preços (conforme sua arte)
   const PRECOS = {
@@ -195,7 +195,7 @@
   };
 
   const DATA = {
-    cremes:["Ninho","Ninho trufado","Morango","Cupuaçu","Amendoim","Ovomaltine","Oreo","Tapioca","Chiclete","Café"],
+    cremes:["Ninho","Ninho trufado","Morango","Cupuaçu","Amendoim","Ovomaltine","Oreo","Tapioca","Chiclete"],
     coberturas:["Açaí","Avelã com cacau","Leite condensado","Morango","Chocolate","Caramelo","Cookies cream","Pistache","Fini dentaduras","Fini beijos","Fini bananas","Nutella (adicional)"],
     frutas:["Banana","Kiwi","Morango"],
     recheios:["Leite em pó","Ovomaltine","Farinha Lacta","Oreo","M&M","Granola","Coco","Farinha de castanha","Marshmallow","Amendoim","Gotas","Bis","Canudo","Flocos de arroz","Chocoball","Chocopoower","Paçoca","Cereja","Jujuba"],
@@ -371,3 +371,4 @@
 </script>
 </body>
 </html>
+
